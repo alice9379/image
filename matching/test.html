@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <title>垃圾回收練習</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #69d1e6;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            display: flex;
+            justify-content: space-around;
+            padding: 20px;
+        }
+        .item, .bin {
+            width: 100px;
+            height: 80px; /* 增加高度以適應圖片 */
+            text-align: center;
+            line-height: 80px; /* 調整文字位置 */
+            border: 2px solid #ccc;
+            margin: 10px;
+            cursor: pointer;
+            background-size: cover; /* 圖片覆蓋整個區域 */
+            background-repeat: no-repeat; /* 避免重複 */
+            background-position: center; /* 圖片居中 */
+        }
+
+        /* 為每個垃圾設置不同的背景圖片 */
+        .item.paper { background-image: url(image/CD.jpg); }
+        .item.battery { background-image: url(image/紙箱.png); }
+        .item.food { background-image: url(image/shampoo.jpg); }
+        .item.a { background-image: url(image/口罩白信封-橫口.png); }
+        /* 為每個垃圾桶設置不同的背景圖片 */
+        .bin.recyclable { background-image: url(image/metals.png); height: 200px;}
+        .bin.hazardous { background-image: url(image/paper_blue.png); height: 200px;}
+        .bin.organic { background-image: url(image/plastic.png);height: 200px; }
+
+        .drop-hover { background-color: #a9dfbf; }
+        #feedback {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <h1>垃圾回收練習</h1>
+    <p>將垃圾拖到正確的垃圾桶！</p>
+    <div class="container">
+        <div>
+            <h3>垃圾</h3>
+            <div class="item paper" draggable="true" data-item="paper"></div>
+            <div class="item battery" draggable="true" data-item="battery"></div>
+            <div class="item food" draggable="true" data-item="food"></div>
+            <div class="item a" draggable="true" data-item="a"></div>
+        </div>
+        <div>
+            <h3>垃圾桶</h3>
+            <div class="bin recyclable" data-step="recyclable"></div>
+            <div class="bin hazardous" data-step="hazardous"></div>
+            <div class="bin organic" data-step="organic"></div>
+        </div>
+    </div>
+    <div id="feedback"></div>
+
+    <script>
+        // 定義正確的答案
+        const correctAnswers = {
+            "paper": "recyclable","a":"hazardous",  // 紙張 -> 可回收垃圾
+            "battery": "hazardous",  // 電池 -> 有害垃圾
+            "food": "organic"   // 食物殘渣 -> 有機垃圾
+        };
+
+        // 選擇所有垃圾與垃圾桶元素
+        const items = document.querySelectorAll('.item');
+        const bins = document.querySelectorAll('.bin');
+        const feedback = document.getElementById('feedback');
+
+        // 為每個垃圾加拖曳事件
+        items.forEach(item => {
+            item.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text', e.target.dataset.item); // 傳遞垃圾名稱
+            });
+        });
+
+        // 為每個垃圾桶加投放事件
+        bins.forEach(bin => {
+            bin.addEventListener('dragover', (e) => {
+                e.preventDefault(); // 允許投放
+                bin.classList.add('drop-hover'); // 高亮投放區域
+            });
+
+            bin.addEventListener('dragleave', () => {
+                bin.classList.remove('drop-hover'); // 移除高亮
+            });
+
+            bin.addEventListener('drop', (e) => {
+                e.preventDefault();
+                bin.classList.remove('drop-hover');
+                const item = e.dataTransfer.getData('text'); // 獲取拖曳的垃圾
+                const binType = bin.dataset.step; // 獲取垃圾桶類型
+
+                // 檢查答案
+                if (correctAnswers[item] === binType) {
+                    bin.textContent = bin.textContent + ' + ' + document.querySelector(`[data-item="${item}"]`).textContent;
+                    document.querySelector(`[data-item="${item}"]`).style.display = 'none'; // 隱藏已投放的垃圾
+                    checkCompletion();
+                } else {
+                    feedback.textContent = '唔啱！請再試一次。';
+                    feedback.style.color = 'red';
+                }
+            });
+        });
+
+        // 檢查是否完成
+        function checkCompletion() {
+            const allPlaced = Array.from(items).every(item => item.style.display === 'none');
+            if (allPlaced) {
+                feedback.textContent = '恭喜你！全部正確，垃圾分類完成！';
+                feedback.style.color = 'green';
+            }
+        }
+    </script>
+</body>
+</html>
