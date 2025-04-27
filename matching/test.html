@@ -48,18 +48,18 @@
     </style>
 </head>
 <body>
-    <h1>垃圾回收練習</h1>
-    <p>將垃圾拖到正確的垃圾桶！</p>
+    <h1>Garbage Collection matching</h1>
+    <p>Drag the item to the correct Recycling bin!</p>
     <div class="container">
         <div>
-            <h3>垃圾</h3>
+            <h3>item</h3>
             <div class="item paper" draggable="true" data-item="paper"></div>
             <div class="item battery" draggable="true" data-item="battery"></div>
             <div class="item food" draggable="true" data-item="food"></div>
             <div class="item a" draggable="true" data-item="a"></div>
         </div>
         <div>
-            <h3>垃圾桶</h3>
+            <h3>Recycling bin</h3>
             <div class="bin recyclable" data-step="recyclable"></div>
             <div class="bin hazardous" data-step="hazardous"></div>
             <div class="bin organic" data-step="organic"></div>
@@ -110,7 +110,7 @@
                     document.querySelector(`[data-item="${item}"]`).style.display = 'none'; // 隱藏已投放的垃圾
                     checkCompletion();
                 } else {
-                    feedback.textContent = '唔啱！請再試一次。';
+                    feedback.textContent = 'Wrong match! Please try again.';
                     feedback.style.color = 'red';
                 }
             });
@@ -120,7 +120,7 @@
         function checkCompletion() {
             const allPlaced = Array.from(items).every(item => item.style.display === 'none');
             if (allPlaced) {
-                feedback.textContent = '恭喜你！全部正確，垃圾分類完成！';
+                feedback.textContent = 'Congratulations! All correct!';
                 feedback.style.color = 'green';
             }
         }
